@@ -1,0 +1,24 @@
+{
+  "name": "@ts-modules-for-gas/gas-http",
+  "version": "0.0.1",
+  "description": "HTTP modules for Google Apps Script written by TypeScript",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awa2/GAS-HTTP.git"
+  },
+  "author": "awa2 <takanori.awatsu+npm@gmail.com> (Takanori Awatsu)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awa2/GAS-HTTP/issues"
+  },
+  "homepage": "https://github.com/awa2/GAS-HTTP#readme"
+}
