@@ -80,7 +80,7 @@ export class Request {
 
     constructor(e: EventObject.Request) {
         if (e['postData']) {
-            switch (e.postData['contents']) {
+            switch (e.postData['type']) {
                 case 'application/json':
                     this.body = JSON.parse(e.postData.contents);
                     break;
@@ -116,7 +116,7 @@ export class WebApp {
         this.routes = { GET: [], POST: [] };
         this.callbacks = { GET: [], POST: [] };
     }
-    public web(e: EventObject.Request) {
+    public listen(e: EventObject.Request) {
         const req = new Request(e);
         const res = new Response();
         const ret: Object[] = [];
@@ -160,9 +160,9 @@ export class WebApp {
 }
 
 export function include(filename: string, params?: { [key: string]: Object }) {
-    var Template = HtmlService.createTemplateFromFile(filename);
+    const Template = HtmlService.createTemplateFromFile(filename);
     if(params){
-        for (var key in params) {
+        for (const key in params) {
             if (params.hasOwnProperty(key)) {
                 (Template as {[key: string]: any})[key] = params[key];
             }
