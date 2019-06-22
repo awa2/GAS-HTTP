@@ -23,8 +23,8 @@ export class Response {
     }
     public json(json: Object) {
         this.output = ContentService.createTextOutput(JSON.stringify(json));
-        this.output.setMimeType(GoogleAppsScript.Content.MimeType.JSON);
-        this.mimetype = GoogleAppsScript.Content.MimeType.JSON;
+        this.output.setMimeType(ContentService.MimeType.JSON);//GoogleAppsScript.Content.MimeType.JSON;
+        this.mimetype = ContentService.MimeType.JSON;
         return this;
     }
     public render(filename: string, variable?: { [key: string]: Object }, title?: string) {
