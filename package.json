@@ -1,15 +1,28 @@
 {
-  "name": "@ts-modules-for-gas/gas-http",
+  "name": "@ts-module-for-gas/gas-http",
   "version": "0.0.1",
   "description": "HTTP modules for Google Apps Script written by TypeScript",
-  "main": "index.js",
+  "main": "./src/HTTP.ts",
   "directories": {
     "test": "test"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "@types/google-apps-script": "0.0.35"
+  },
+  "devDependencies": {
+    "@google/clasp": "^1.5.0",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/recursive-readdir": "^2.2.0",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "tslint": "^5.12.0",
+    "typescript": "^3.2.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "push": "cd src; clasp push",
+    "lint": ""
   },
   "repository": {
     "type": "git",
