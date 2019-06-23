@@ -68,15 +68,15 @@ export class Response {
         return this.output;
     }
 }
-export class Request {
+export class Request<Q, B> {
     // baseUrl? : string;
-    public body?: { [key: string]: any };
+    public body?: { [key: string]: any } | B;
     public method: 'POST' | 'GET';
     public originUrl: string;
     // params : string;
     public path: string;
     public protocol: 'https';
-    public query: { [key: string]: any } | undefined
+    public query: { [key: string]: any } | Q | undefined;
 
     constructor(e: EventObject.Request) {
         if (e['postData']) {
@@ -117,7 +117,7 @@ export class WebApp {
         this.callbacks = { GET: [], POST: [] };
     }
     public listen(e: EventObject.Request) {
-        const req = new Request(e);
+        const req = new Request<any, any>(e);
         const res = new Response();
         const ret: Object[] = [];
 
@@ -147,12 +147,12 @@ export class WebApp {
         });
         return res.out();
     }
-    public get(path: { [key: string]: Object }, callback: (req: Request, res: Response) => any) {
+    public get<Query,Body,ResBody>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => ResBody) {
         this.routes['GET'].push(path);
         this.callbacks['GET'].push(callback);
         return this;
     }
-    public post(path: { [key: string]: Object }, callback: (req: Request, res: Response) => any) {
+    public post<Query,Body,ResBody>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => ResBody) {
         this.routes['POST'].push(path);
         this.callbacks['POST'].push(callback);
         return this;
