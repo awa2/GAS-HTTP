@@ -1,6 +1,6 @@
 {
   "name": "@ts-module-for-gas/gas-http",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "HTTP modules for Google Apps Script written by TypeScript",
   "main": "./src/HTTP.ts",
   "directories": {
