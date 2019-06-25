@@ -82,7 +82,7 @@ export class Request<Q, B> {
         if (e['postData']) {
             switch (e.postData['type']) {
                 case 'application/json':
-                    this.body = JSON.parse(e.postData.contents);
+                    this.body = JSON.parse(e.postData.contents.replace(/\n/g,'\\n'));
                     break;
                 case 'application/x-www-form-urlencoded':
                     const body: { [key: string]: any } = {};
@@ -147,12 +147,12 @@ export class WebApp {
         });
         return res.out();
     }
-    public get<Query,Body,ResBody>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => ResBody) {
+    public get<Query,Body>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => any) {
         this.routes['GET'].push(path);
         this.callbacks['GET'].push(callback);
         return this;
     }
-    public post<Query,Body,ResBody>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => ResBody) {
+    public post<Query,Body>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => any) {
         this.routes['POST'].push(path);
         this.callbacks['POST'].push(callback);
         return this;
