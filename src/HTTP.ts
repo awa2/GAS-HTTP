@@ -168,5 +168,5 @@ export function include(filename: string, params?: { [key: string]: Object }) {
             }
         }
     }
-    return Template.evaluate();
+    return Template.evaluate().getContent();
 }
