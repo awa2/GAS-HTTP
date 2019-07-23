@@ -33,7 +33,7 @@ export class Response {
             for (const key in variable) {
                 if (variable.hasOwnProperty(key)) {
                     // Object.defineProperty(Template, key, variable[key]);
-                    (Template as {[key: string]: any})[key] = variable[key];
+                    (Template as { [key: string]: any })[key] = variable[key];
                 }
             }
         }
@@ -46,7 +46,7 @@ export class Response {
         return this;
     }
     public send(content?: string | Object) {
-        if(content){
+        if (content) {
             if (typeof content === 'string') {
                 if (this.mimetype === 'HTML') {
                     this.output = HtmlService.createHtmlOutput().setContent(content);
@@ -73,7 +73,7 @@ export class Request<Q, B> {
     public body?: { [key: string]: any } | B;
     public method: 'POST' | 'GET';
     public originUrl: string;
-    // params : string;
+    public params? : any;
     public path: string;
     public protocol: 'https';
     public query: { [key: string]: any } | Q | undefined;
@@ -82,12 +82,12 @@ export class Request<Q, B> {
         if (e['postData']) {
             switch (e.postData['type']) {
                 case 'application/json':
-                    this.body = JSON.parse(e.postData.contents.replace(/\n/g,'\\n'));
+                    this.body = JSON.parse(e.postData.contents.replace(/\n/g, '\\n'));
                     break;
                 case 'application/x-www-form-urlencoded':
                     const body: { [key: string]: any } = {};
                     const qs = e.postData.contents.split('&');
-                    qs.forEach(q =>{
+                    qs.forEach(q => {
                         const key = q.split('=')[0];
                         const val = q.split('=')[1];
                         body[key] = val;
@@ -109,28 +109,37 @@ export class Request<Q, B> {
     }
 
 }
+type Path = ({ [key: string]: Object } | string);
 export class WebApp {
-    private routes: { [method in 'GET' | 'POST']: { [key: string]: Object }[] };
+    private routes: { [method in 'GET' | 'POST']: Path[] };
     private callbacks: { [method in 'GET' | 'POST']: Function[] };
+    private event?: EventObject.Request;
     constructor() {
         this.routes = { GET: [], POST: [] };
         this.callbacks = { GET: [], POST: [] };
     }
     public listen(e: EventObject.Request) {
+        this.event = e;
         const req = new Request<any, any>(e);
         const res = new Response();
-        const ret: Object[] = [];
 
         this.routes[req.method].some((route, i) => {
             if (route && (req.query !== {}) && (req.query !== undefined)) {
                 let route_is_matched = true;
-                for (const key in route) {
-                    route_is_matched = route_is_matched && (route[key] === req.query[key])
+                if (typeof route === 'string') {
+                    // Query = { user: :path }
+                    route_is_matched = route_is_matched && req.query[route];
+                    req.params[route] = req.query[route];
+                } else {
+                    // Query = { user: 'index'}
+                    for (const key in route) {
+                        route_is_matched = route_is_matched && (route[key] === req.query[key]);
+                    }
                 }
                 if (route_is_matched) {
                     const callback = this.callbacks[req.method][i];
                     const result = callback(req, res);
-                    if (result === true) {
+                    if (result === true) { //TODO: ここの処理見直し
                         return true;
                     }
                 }
@@ -147,24 +156,30 @@ export class WebApp {
         });
         return res.out();
     }
-    public get<Query,Body>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => any) {
+    public get<Query, Body>(path: Path, callback: (req: Request<Query, Body>, res: Response) => any) {
         this.routes['GET'].push(path);
         this.callbacks['GET'].push(callback);
         return this;
     }
-    public post<Query,Body>(path: { [key: string]: Object }, callback: (req: Request<Query,Body>, res: Response) => any) {
+    public post<Query, Body>(path: Path, callback: (req: Request<Query, Body>, res: Response) => any) {
         this.routes['POST'].push(path);
         this.callbacks['POST'].push(callback);
+        return this;
+    }
+    public use<Query, Body>(path: Path, app: WebApp) {
+        if(this.event){
+            app.listen(this.event);
+        }
         return this;
     }
 }
 
 export function include(filename: string, params?: { [key: string]: Object }) {
     const Template = HtmlService.createTemplateFromFile(filename);
-    if(params){
+    if (params) {
         for (const key in params) {
             if (params.hasOwnProperty(key)) {
-                (Template as {[key: string]: any})[key] = params[key];
+                (Template as { [key: string]: any })[key] = params[key];
             }
         }
     }
